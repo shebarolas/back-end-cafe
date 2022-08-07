@@ -43,7 +43,7 @@ class Servidor {
     }
 
     listen(){
-        this.app.listen(7000, () => {
+        this.app.listen(8080, () => {
             console.log("Servidor corriendo en el puerto 7000");
         })
     }
