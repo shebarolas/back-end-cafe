@@ -43,7 +43,7 @@ class Servidor {
     }
 
     listen(){
-        this.app.listen(8080, () => {
+        this.app.listen(process.env.PORT || 7000, () => {
             console.log("Servidor corriendo en el puerto 7000");
         })
     }
