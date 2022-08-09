@@ -93,12 +93,18 @@ const eliminarUsuario = async (req = request, res = response) => {
 
     const uid = req.uid;
 
+    console.log(uid)
+
     const usuario = await Usuario.findByIdAndUpdate(id, query);
+
+    const usuario1 = await Usuario.findById(uid);
+
+ 
 
     res.status(200).json({
         message: 'Usuario Update Success',
         usuario,
-        uid
+        usuario1
     })
 
 }
