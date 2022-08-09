@@ -1,6 +1,7 @@
 const cors = require('cors');
 const express = require('express');
 const routeUsuario = require('../routes/usuarios.routes')
+const routeAuth = require('../routes/auth.routes');
 const {conectionDB} = require('../databases/config');
 
 class Servidor {
@@ -11,6 +12,8 @@ class Servidor {
         this.DBconection();
 
         this.pathUsuarios = '/api/usuarios';
+
+        this.pathAuth = '/auth/usuarios';
 
         this.middleware();
 
@@ -40,6 +43,7 @@ class Servidor {
 
     routes(){
         this.app.use(this.pathUsuarios, routeUsuario);
+        this.app.use(this.pathAuth, routeAuth);
     }
 
     listen(){
