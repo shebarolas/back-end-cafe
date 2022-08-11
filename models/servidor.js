@@ -1,8 +1,11 @@
 const cors = require('cors');
 const express = require('express');
+const passport = require('passport');
+const session = require('express-session');
 const routeUsuario = require('../routes/usuarios.routes')
 const routeAuth = require('../routes/auth.routes');
 const {conectionDB} = require('../databases/config');
+
 
 class Servidor {
     constructor(){
@@ -19,6 +22,7 @@ class Servidor {
 
         this.routes();
 
+
       
 
 
@@ -31,8 +35,13 @@ class Servidor {
 
         this.app.use(express.json());
 
+        this.app.use(session({secret : 'zorro'}));
+        this.app.use(passport.initialize());
+        this.app.use(passport.session());
         // Directorio Público
         this.app.use( express.static('public') );
+
+
 
 
     }

@@ -20,7 +20,8 @@ const UsuarioSche = Schema({
     },
     role: {
         type: String,
-        required : true
+        required : true,
+        default: 'admin'
     },
     estado: {
         type: Boolean,

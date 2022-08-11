@@ -2,6 +2,7 @@ const {request, response} = require('express');
 const bcryptjs = require('bcryptjs');
 const Usuario = require('../models/usuario');
 const {generarToken} = require('../helpers/jwt');
+const {googleVerificar} = require('../helpers/verificar-tokenGoogle');
 
 
 const loginAuth = async(req = request, res = request) => {
@@ -50,7 +51,27 @@ const loginAuth = async(req = request, res = request) => {
 
 }
 
+const loginGoogle = async (req, res) => {
+
+
+    
+    try{
+    
+         res.status(200).json({
+            message: 'Entrada con exito google',
+            usuario: req.user
+         });
+
+    }catch(err){
+        res.status(401).json({
+            mesage: 'Error en vaidacion de token goolge'
+        })
+    }
+
+}
+
 
 module.exports = {
     loginAuth
+    ,loginGoogle
 }
