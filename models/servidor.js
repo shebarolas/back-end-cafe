@@ -4,6 +4,7 @@ const passport = require('passport');
 const session = require('express-session');
 const routeUsuario = require('../routes/usuarios.routes')
 const routeAuth = require('../routes/auth.routes');
+const routeCategory = require('../routes/categorias.routes');
 const {conectionDB} = require('../databases/config');
 
 
@@ -17,6 +18,8 @@ class Servidor {
         this.pathUsuarios = '/api/usuarios';
 
         this.pathAuth = '/auth/usuarios';
+
+        this.pathCategorias = '/categorias';
 
         this.middleware();
 
@@ -53,6 +56,7 @@ class Servidor {
     routes(){
         this.app.use(this.pathUsuarios, routeUsuario);
         this.app.use(this.pathAuth, routeAuth);
+        this.app.use(this.pathCategorias, routeCategory);
     }
 
     listen(){

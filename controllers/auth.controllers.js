@@ -40,6 +40,7 @@ const loginAuth = async(req = request, res = request) => {
 
         res.json({
             message: 'Login successful Auth',
+            usuario,
             token
         });
     }catch(err){
