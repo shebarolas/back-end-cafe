@@ -5,6 +5,7 @@ const session = require('express-session');
 const routeUsuario = require('../routes/usuarios.routes')
 const routeAuth = require('../routes/auth.routes');
 const routeCategory = require('../routes/categorias.routes');
+const routeProduct = require('../routes/productos.routes');
 const {conectionDB} = require('../databases/config');
 
 
@@ -20,6 +21,8 @@ class Servidor {
         this.pathAuth = '/auth/usuarios';
 
         this.pathCategorias = '/categorias';
+
+        this.pathProductos = '/api/productos'
 
         this.middleware();
 
@@ -57,6 +60,7 @@ class Servidor {
         this.app.use(this.pathUsuarios, routeUsuario);
         this.app.use(this.pathAuth, routeAuth);
         this.app.use(this.pathCategorias, routeCategory);
+        this.app.use(this.pathProductos, routeProduct);
     }
 
     listen(){

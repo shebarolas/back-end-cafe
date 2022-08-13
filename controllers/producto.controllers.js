@@ -1,31 +1,34 @@
 const {request, response} = require('express');
 
-const Categoria = require('../models/categoria');
+const Producto= require('../models/producto');
 
 
-const crearCategoria = async (req = request, res = response) => {
+const crearProducto = async (req = request, res = response) => {
 
     const nombre = req.body.nombre.toUpperCase();
-    const categoriaDB = await Categoria.findOne({
+    const {categoria, precio} = req.body;
+    const productoDB = await Producto.findOne({
         nombre
-    });
+    }).populate('categoria');
 
-    if (categoriaDB){
+    if (productoDB){
         return res.status(400).json({
-            mesage: 'La categoria ya existe'
+            mesage: 'El producto ya existe'
         });
     }else{
         const uid = req.uid
 
-        const categoria = new Categoria({
+        const producto = new Producto({
             nombre,
-            usuario: uid
+            usuario: uid,
+            categoria,
+            precio
         });
 
-        const data = (await categoria.save()).populate('categoria');
+        const data =await (await (await producto.save()).populate('categoria')).populate('usuario');
 
         res.status(200).json({
-            mesage: 'Categoria creada con exito',
+            mesage: 'Producto creada con exito',
             data
         });
         
@@ -40,9 +43,9 @@ const obtenerCategorias = async (req, res) => {
 
     const query = {estado : true};
 
-    const [total, usuario] = await Promise.all([
-        Categoria.countDocuments(query),
-        Categoria.find(query).skip(Number(desde)).limit(Number(limite)).populate('usuario')
+    const [total, categoria] = await Promise.all([
+        Producto.countDocuments(query),
+        Producto.find(query).skip(Number(desde)).limit(Number(limite)).populate('usuario')
     ]);
 
 
@@ -56,7 +59,7 @@ const obtenerCategorias = async (req, res) => {
     res.status(200).json({
         message: 'Todas las categorias',
         total,
-        usuario
+        categoria
     });
 
 };
@@ -121,9 +124,5 @@ const eliminarCategoria = async (req, res) => {
 
 
 module.exports = {
-    crearCategoria,
-    obtenerCategorias,
-    obtenerCategoriasId,
-    actualizarCategoriaId,
-    eliminarCategoria
+    crearProducto
 }
