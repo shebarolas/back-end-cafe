@@ -1,5 +1,6 @@
 const Role = require('../models/role');
 const Usuario = require('../models/usuario');
+const Categoria = require('../models/categoria');
 
 
 const roleExists = async(role = '') => {
@@ -36,8 +37,19 @@ const idExtists = async(id) => {
     }
 }
 
+const idExtistsCateg = async(id) => {
+
+    const idExtists = await Categoria.findById(id);
+    if (!idExtists) {
+
+        throw new Error("El id no esta registrado en la base de datos")
+    }
+
+}
+
 module.exports = {
     roleExists,
     emailExists,
-    idExtists
+    idExtists,
+    idExtistsCateg
 }
