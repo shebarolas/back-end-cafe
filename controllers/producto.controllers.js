@@ -37,40 +37,40 @@ const crearProducto = async (req = request, res = response) => {
 };
 
 
-const obtenerCategorias = async (req, res) => {
+const obtenerProductos = async (req, res) => {
 
     const {limite = 5, desde = 0} = req.query;
 
     const query = {estado : true};
 
-    const [total, categoria] = await Promise.all([
+    const [total, producto] = await Promise.all([
         Producto.countDocuments(query),
         Producto.find(query).skip(Number(desde)).limit(Number(limite)).populate('usuario')
     ]);
 
 
 
-    if(!total || !usuario) {
+    if(!total || !producto) {
         return res.status(404).json({
-            message: 'Categorias not found'
+            message: 'Producto not found'
         });    
     }
 
     res.status(200).json({
-        message: 'Todas las categorias',
+        message: 'Todos los productos',
         total,
-        categoria
+        producto
     });
 
 };
 
-const obtenerCategoriasId = async (req, res) => {
+const obtenerProductosId = async (req, res) => {
 
     const {id} = req.params;
 
-    const categoria = await Categoria.findById(id).populate('usuario');
+    const producto = await Producto.findById(id).populate('categoria');
 
-    if (!categoria){
+    if (!producto) {
         return res.status(404).json({
             message: 'Categorias not found'
         })
@@ -78,51 +78,55 @@ const obtenerCategoriasId = async (req, res) => {
 
     res.status(200).json({
         message: 'Categoria por id',
-        categoria
+        producto
     })
 
 }
 
-const actualizarCategoriaId = async(req, res) => {
+const actualizarProductoId = async(req, res) => {
 
     const {id} = req.params;
     
-    const {__v, estado, usuario, ...categoria} = req.body;
+    const {__v, estado, usuario, ...producto} = req.body;
 
-    const categoriaUpdate = await Categoria.findByIdAndUpdate(id, categoria);
+    const productoUpdate = await Producto.findByIdAndUpdate(id, producto);
 
-    if (!categoriaUpdate){
+    if (!productoUpdate){
         return res.status(400).json({message : 'Hubo un problema al actualizar la categoria'});
     }
 
     res.status(200).json({
         message : 'Categoria actualizada',
-        categoriaUpdate
+        productoUpdate
     });
 
 
 }
 
 
-const eliminarCategoria = async (req, res) => {
+const eliminarProducto = async (req, res) => {
 
     const {id} = req.params;
     const query = {estado : false};
 
-    const categoria = await Categoria.findByIdAndUpdate(id, query);
+    const producto = await Producto.findByIdAndUpdate(id, query);
 
-    if (!categoria) {
+    if (!producto) {
         return res.status(400).json({message : 'Erro al eliminar la categoria'}); 
     }
 
     res.status(200).json({
         message : 'Categoria eliminada',
-        categoria
+        producto
     });
 
 }
 
 
 module.exports = {
-    crearProducto
+    crearProducto,
+    actualizarProductoId,
+    eliminarProducto,
+    obtenerProductos,
+    obtenerProductosId
 }

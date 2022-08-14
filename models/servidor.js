@@ -6,6 +6,7 @@ const routeUsuario = require('../routes/usuarios.routes')
 const routeAuth = require('../routes/auth.routes');
 const routeCategory = require('../routes/categorias.routes');
 const routeProduct = require('../routes/productos.routes');
+const routeBuscar = require('../routes/buscar.routes');
 const {conectionDB} = require('../databases/config');
 
 
@@ -23,6 +24,8 @@ class Servidor {
         this.pathCategorias = '/categorias';
 
         this.pathProductos = '/api/productos'
+
+        this.pathBuscar = '/api/buscar'
 
         this.middleware();
 
@@ -61,6 +64,7 @@ class Servidor {
         this.app.use(this.pathAuth, routeAuth);
         this.app.use(this.pathCategorias, routeCategory);
         this.app.use(this.pathProductos, routeProduct);
+        this.app.use(this.pathBuscar, routeBuscar);
     }
 
     listen(){
