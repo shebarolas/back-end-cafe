@@ -2,11 +2,13 @@ const cors = require('cors');
 const express = require('express');
 const passport = require('passport');
 const session = require('express-session');
+const fileUpload = require('express-fileupload');
 const routeUsuario = require('../routes/usuarios.routes')
 const routeAuth = require('../routes/auth.routes');
 const routeCategory = require('../routes/categorias.routes');
 const routeProduct = require('../routes/productos.routes');
 const routeBuscar = require('../routes/buscar.routes');
+const routeUpload = require('../routes/upload.routes');
 const {conectionDB} = require('../databases/config');
 
 
@@ -26,6 +28,8 @@ class Servidor {
         this.pathProductos = '/api/productos'
 
         this.pathBuscar = '/api/buscar'
+
+        this.pathUpload = '/api/upload'
 
         this.middleware();
 
@@ -50,6 +54,11 @@ class Servidor {
         // Directorio Público
         this.app.use( express.static('public') );
 
+        this.app.use(fileUpload({
+            useTempFiles : true,
+            tempFileDir : '/tmp/'
+        }));
+
 
 
 
@@ -65,6 +74,7 @@ class Servidor {
         this.app.use(this.pathCategorias, routeCategory);
         this.app.use(this.pathProductos, routeProduct);
         this.app.use(this.pathBuscar, routeBuscar);
+        this.app.use(this.pathUpload, routeUpload);
     }
 
     listen(){
