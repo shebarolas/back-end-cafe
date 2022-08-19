@@ -1,11 +1,27 @@
 const {Router} = require('express');
-
-const {upload} = require('../controllers/upload.controller');
+const {check} = require('express-validator');
+const {validarCampos} = require('../middlewares/validarCampos');
+const {upload, actualizarImage,mostrarImagen} = require('../controllers/upload.controller');
+const {existsCollection} = require('../helpers/validation-db');
+const {validarArchivo} = require('../middlewares/validarArchivo');
 
 
 const router = new Router();
 
-router.post('/upload', upload);
+router.post('/upload', validarArchivo,upload);
+
+router.put('/:coleccion/:id', [
+    validarArchivo,
+    check('id', 'Debe ser un Id valido').isMongoId(),
+    check('coleccion').custom(existsCollection),
+    validarCampos
+], actualizarImage );
+
+router.get( '/:coleccion/:id', [
+    check('id', 'Debe ser un Id valido').isMongoId(),
+    check('coleccion').custom(existsCollection),
+    validarCampos
+], mostrarImagen);
 
 
 

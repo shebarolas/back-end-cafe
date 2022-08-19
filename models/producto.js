@@ -32,6 +32,9 @@ const ProductoSche = Schema({
     disponibilidad: {
         type: Boolean,
         default: true
+    },
+    img : {
+        type: String
     }
 
 });

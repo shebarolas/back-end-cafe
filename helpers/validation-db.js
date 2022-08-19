@@ -58,6 +58,22 @@ const idExtistsProduct = async(id) =>{
 
 }
 
+const existsCollection = (coleccion) => {
+
+    const colec  = ['usuario', 'producto']
+
+    const includes = colec.includes(coleccion);
+
+
+
+    if(!includes){
+        throw new Error("La coleccion no esta registrado en la base de datos")
+    }
+
+    return true;
+
+}
+
 
 
 module.exports = {
@@ -65,5 +81,6 @@ module.exports = {
     emailExists,
     idExtists,
     idExtistsCateg,
-    idExtistsProduct
+    idExtistsProduct,
+    existsCollection
 }

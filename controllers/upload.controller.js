@@ -1,52 +1,168 @@
 const {request, response} = require('express');
 const path = require('path');
-const {v4: uuidv4} = require('uuid');
+const fs = require('fs');
+const {subirArchivos} = require('../helpers/subir-archivos');
+const Usuario = require('../models/usuario');
+const Producto = require('../models/producto');
 
+const upload = async(req = request, res = response) => {
 
-const upload = (req = request, res = response) => {
+    const pathCompleto = await subirArchivos(req.files, 'img');
 
-    if (!req.files || Object.keys(req.files).length === 0 || !req.files.archivo) {
-        return res.status(400).json({
-            message: 'El archivo no se pudo subir'
-        });
-    }
+    res.status(200).json({
+        mesage: 'Upload complete',
+        pathCompleto
+    })
 
-    const {archivo} = req.files;
+}
 
-    const nombre = archivo.name.split('.');
+const actualizarImage = async (req, res) => {
+    const {id, coleccion} = req.params;
 
-    const extension = nombre[nombre.length - 1];
+    let modelo;
 
-    const extensionesValidas = ['jpg', 'png', 'gif'];
+    console.log(id);
+    console.log(coleccion);
 
-    if (!extensionesValidas.includes(extension)) {
-        return res.status(400).json({
-            message: 'La extension del archivo no es valida'
-        });
-    }
+    switch (coleccion) {
+        case 'usuario':
+            modelo = await Usuario.findById(id);
 
-    const nombreTemp = uuidv4() + '.' + extension;
+            
+            if (!modelo) {
+                return res.status(400).json({
+                    message: 'No existe usuario con ese id'
+                })
+            }else{
+                let pathImagen;
+                if(modelo.img){
+                     pathImagen = path.join(__dirname, '../uploads/', coleccion, modelo.img);
+                    if(fs.existsSync(pathImagen)){
+                        fs.unlinkSync(pathImagen);
+                    }
+                }
 
+                const pathCompleto = await subirArchivos(req.files, coleccion);
+                modelo.img = pathCompleto;
+                await modelo.save();
+                res.status(200).json({
+                    modelo
+                });
+                
+            }
+        break;
 
-    uploadPath = path.join(__dirname, '../uploads', nombreTemp);
+        case 'producto':
+        modelo = await Producto.findById(id);
 
-    archivo.mv(uploadPath, function (err){
-        if (err) {
-            return res.status(500).json({message: err});
+        if (!modelo) {
+            res.status(404).json({
+                message: 'No existe producto con ese id'
+            })
+        }else{
+            let pathImagen;
+            if(modelo.img){
+                pathImagen = path.join(__dirname, '../uploads/', coleccion, modelo.img);
+                if(fs.existsSync(pathImagen)){
+                    fs.unlinkSync(pathImagen);
+                }
+            }
+            const pathCompleto = await subirArchivos(req.files,coleccion);
+            modelo.img = pathCompleto;
+            await modelo.save();
+            res.status(200).json({
+                modelo
+            });
         }
+        break;
 
-        res.status(200).json({
-            message: 'Archivo subido' + uploadPath,
-            archivo
-        })
+        default: 
+    }
 
-    });
+   
 
+    // const pathCompleto = await subirArchivos(req.files, 'img');
+    // modelo.img = pathCompleto
+    // await modelo.save();
+
+}
+
+const mostrarImagen = async (req, res) => {
+    const {id, coleccion} = req.params;
+
+    let modelo;
+
+    console.log(id);
+    console.log(coleccion);
+
+    switch (coleccion) {
+        case 'usuario':
+            modelo = await Usuario.findById(id);
+
+            
+            if (!modelo) {
+                return res.status(400).json({
+                    message: 'No existe usuario con ese id'
+                })
+            }else{
+                let pathImagen;
+                if(modelo.img){
+                     pathImagen = path.join(__dirname, '../uploads/', coleccion, modelo.img);
+                    if(fs.existsSync(pathImagen)){
+                        fs.unlinkSync(pathImagen);
+                    }
+
+                    const pathCompleto = await subirArchivos(req.files, coleccion);
+                    modelo.img = pathCompleto;
+                    await modelo.save();
+                    res.status(200).json({
+                        modelo
+                    });
+                }else{
+                    pathImagen = path.join(__dirname, '../assets/Costo de base de datos MySql.PNG');
+                    return res.sendFile(pathImagen);
+                }
+
+                
+            }
+        break;
+
+        case 'producto':
+        modelo = await Producto.findById(id);
+
+        if (!modelo) {
+            res.status(404).json({
+                message: 'No existe producto con ese id'
+            })
+        }else{
+            let pathImagen;
+            if(modelo.img){
+                pathImagen = path.join(__dirname, '../uploads/', coleccion, modelo.img);
+                if(fs.existsSync(pathImagen)){
+                    fs.unlinkSync(pathImagen);
+                }
+                const pathCompleto = await subirArchivos(req.files,coleccion);
+                modelo.img = pathCompleto;
+                await modelo.save();
+    
+            }else{
+                
+                pathImagen = path.join(__dirname, '../assets/Costo de base de datos MySql.PNG');
+                return res.sendFile(pathImagen);
+            }
+
+        }
+        break;
+
+        default: 
+    }
 }
 
 
 module.exports = {
-    upload
+    upload,
+    actualizarImage,
+    mostrarImagen
 }
 
 
